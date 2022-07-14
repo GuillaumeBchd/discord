@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"errors"
 	"os"
 	"os/signal"
 
@@ -25,6 +26,10 @@ func New(l *zap.SugaredLogger, t string, g string) *Discord {
 }
 
 func (d *Discord) init() error {
+	if d.Token == "" {
+		return errors.New("missing discord token")
+	}
+
 	s, err := discordgo.New("Bot " + d.Token)
 	if err != nil {
 		return err
