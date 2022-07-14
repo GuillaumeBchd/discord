@@ -2,10 +2,10 @@ name: Go package
 
 on:
   push:
-    branches-ignore:
-      - master
+    branches: [dev]
 
 jobs:
+
   build:
 
     runs-on: ubuntu-latest
@@ -22,3 +22,18 @@ jobs:
 
       - name: Test
         run: go test -v ./...
+
+  deploy:
+    if: ${{ success() }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Railway
+        run: curl -fsSL https://railway.app/install.sh | sh
+
+      - name: Deploy
+        run: railway up
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_DEV }}

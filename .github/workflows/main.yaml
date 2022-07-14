@@ -32,7 +32,7 @@ jobs:
 
       - name: Install Railway
         run: curl -fsSL https://railway.app/install.sh | sh
-      
+
       - name: Deploy
         run: railway up
         env:
