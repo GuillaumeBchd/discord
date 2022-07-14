@@ -10,18 +10,37 @@ import (
 )
 
 type Discord struct {
-	Logger *zap.SugaredLogger
+	Logger *zap.Logger
 	Token  string
 	Guild  string // For development purpose
 
 	s *discordgo.Session
 }
 
-func New(l *zap.SugaredLogger, t string, g string) *Discord {
-	return &Discord{
-		Logger: l,
+func New(t string, opts ...Option) *Discord {
+	discord := &Discord{
+		Logger: zap.NewNop(),
 		Token:  t,
-		Guild:  g,
+	}
+
+	for _, opt := range opts {
+		opt(discord)
+	}
+
+	return discord
+}
+
+type Option func(*Discord)
+
+func WithLogger(l *zap.Logger) Option {
+	return func(d *Discord) {
+		d.Logger = l
+	}
+}
+
+func WithGuild(g string) Option {
+	return func(d *Discord) {
+		d.Guild = g
 	}
 }
 

@@ -9,18 +9,17 @@ import (
 func main() {
 
 	// Logger creation
-	l, _ := zap.NewProduction()
-	logger := l.Sugar()
+	logger, _ := zap.NewProduction()
 
 	// Load configuration
 	config, err := config.Load()
 	if err != nil {
-		logger.Fatal("Couldn't read configuration", err)
+		logger.Fatal("Couldn't read configuration", zap.Error(err))
 	}
 
 	// Run the app
-	d := discord.New(logger, config.Token, config.Guild)
+	d := discord.New(config.Token, discord.WithGuild(config.Guild), discord.WithLogger(logger))
 	if err := d.Run(); err != nil {
-		logger.Fatal(err)
+		logger.Fatal("Error while running", zap.Error(err))
 	}
 }
